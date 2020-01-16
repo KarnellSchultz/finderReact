@@ -6,14 +6,10 @@ export default function Breadcrumb() {
 			<div className="mt-2">
 				<nav aria-label="breadcrumb">
 					<ol className="breadcrumb">
-						<li className="breadcrumb-item">
-							<a href="#">Home</a>
-						</li>
-						<li className="breadcrumb-item">
-							<a href="#">Documents</a>
-						</li>
+						<li className="breadcrumb-item">Home</li>
+						<li className="breadcrumb-item">Documents</li>
 						<li className="breadcrumb-item active" aria-current="page">
-							Good Data
+							Data
 						</li>
 					</ol>
 				</nav>
