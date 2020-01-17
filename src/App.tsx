@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import Nav from './Nav';
 import Breadcrumb from './Breadcrumb';
 import TreeNav from './TreeNav';
-import Main from './Main';
-import Toggle from './Toggle';
+import MainContainer from './MainContainer';
+import createNewFolder from './Utils/HelperFunctions';
+import NavContainer from './NavContainer';
 
 const App: React.FC = () => {
 	const initialState = [
-		{ type: 'folder', name: 'firstFolder', parent: 'root', child: '' },
+		{
+			type: 'folder',
+			name: 'Untitled Folder',
+			parent: 'root',
+			child: '',
+			isEditing: false,
+		},
 	];
 
 	const [files, setFiles] = useState(initialState);
@@ -15,31 +21,50 @@ const App: React.FC = () => {
 	const handleCreateNewFolder = (
 		e: React.MouseEvent<HTMLButtonElement>,
 	): void => {
+		const newFile = createNewFolder();
+		e.preventDefault();
+		console.log(files);
+		setFiles([...files, newFile]);
+	};
+	const handleCreateNewFile = (
+		e: React.MouseEvent<HTMLButtonElement>,
+	): void => {
 		const newFile = {
 			type: 'folder',
 			name: 'firstFolder',
 			parent: 'root',
 			child: '',
+			isEditing: false,
 		};
 		e.preventDefault();
 		console.log(files);
 		setFiles([...files, newFile]);
 	};
 
+	const handleFolderClick = (e: React.MouseEvent, index: number) => {
+		e.preventDefault();
+		console.log(index, 'this is index');
+		console.log(files[index], '2nd loggggg');
+		// setFiles({ ...files });
+	};
+
 	return (
 		<div className="App container bg-light shadow p-3 mb-5 bg-white rounded">
 			<div className="jumbotron bg-secondary border border-white ">
 				<div className="row bg-dark">
-					<Nav handleCreateNewFolder={handleCreateNewFolder} />
+					<NavContainer
+						handleCreateNewFile={handleCreateNewFile}
+						handleCreateNewFolder={handleCreateNewFolder}
+					/>
 				</div>
 				<div className="row bg-white">
 					<Breadcrumb />
 				</div>
 				<div className="row bg-light">
 					<TreeNav />
-					<Main files={files} />
+					<MainContainer handleFolderClick={handleFolderClick} files={files} />
 				</div>
-				<Toggle>
+				{/* <Toggle>
 					{({ on, toggle }) => {
 						return (
 							<>
@@ -48,7 +73,7 @@ const App: React.FC = () => {
 							</>
 						);
 					}}
-				</Toggle>
+				</Toggle> */}
 			</div>
 		</div>
 	);
