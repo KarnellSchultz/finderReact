@@ -13,10 +13,12 @@ const App: React.FC = () => {
 			parent: 'root',
 			child: '',
 			isEditing: false,
+			isHighlighted: false,
 		},
 	];
 
 	const [files, setFiles] = useState(initialState);
+	const [isHighlighted, setIsHighlighted] = useState(false);
 
 	const handleCreateNewFolder = (
 		e: React.MouseEvent<HTMLButtonElement>,
@@ -35,6 +37,7 @@ const App: React.FC = () => {
 			parent: 'root',
 			child: '',
 			isEditing: false,
+			isHighlighted: false,
 		};
 		e.preventDefault();
 		console.log(files);
@@ -44,8 +47,42 @@ const App: React.FC = () => {
 	const handleFolderClick = (e: React.MouseEvent, index: number) => {
 		e.preventDefault();
 		console.log(index, 'this is index');
-		console.log(files[index], '2nd loggggg');
-		// setFiles({ ...files });
+
+		const tempFiles = [...files];
+		tempFiles.map(el => (el.isHighlighted = false));
+		tempFiles[index].isHighlighted = !tempFiles[index].isHighlighted;
+		setIsHighlighted(!isHighlighted);
+		setFiles([...tempFiles]);
+	};
+
+	const handleRenameClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		console.log('clicked rename');
+		const tempFiles = [...files];
+
+		// const result = tempFiles.filter((el, index) => {
+		// 	console.log(index);
+		// 	return el.isHighlighted === true;
+		// });
+
+		// const results = tempFiles.map(el => {
+		// 	if (el.isHighlighted) {
+		// 		el.isEditing = true;
+		// 	}
+		// });
+
+		tempFiles.forEach(el => {
+			if (el.isHighlighted) {
+				el.isEditing = true;
+				console.log('GOT EMMM, ', el);
+			}
+		});
+
+		// // tempFiles.splice([index], 1, result);
+		// const tempRestult = [...tempFiles, result[0]];
+		// // result[0].isEditing = !result[0].isEditing;
+		// // setFiles([...finalResult])
+		console.log(tempFiles);
 	};
 
 	return (
@@ -55,6 +92,8 @@ const App: React.FC = () => {
 					<NavContainer
 						handleCreateNewFile={handleCreateNewFile}
 						handleCreateNewFolder={handleCreateNewFolder}
+						isHighlighted={isHighlighted}
+						handleRenameClick={handleRenameClick}
 					/>
 				</div>
 				<div className="row bg-white">
@@ -64,16 +103,6 @@ const App: React.FC = () => {
 					<TreeNav />
 					<MainContainer handleFolderClick={handleFolderClick} files={files} />
 				</div>
-				{/* <Toggle>
-					{({ on, toggle }) => {
-						return (
-							<>
-								{on && <h1>YO</h1>}
-								<button onClick={toggle}> HELLO </button>
-							</>
-						);
-					}}
-				</Toggle> */}
 			</div>
 		</div>
 	);

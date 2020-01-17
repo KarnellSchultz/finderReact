@@ -1,33 +1,29 @@
 import React from 'react';
 
 type Props = {
-	handleCreateNewFolder: (e: React.MouseEvent<HTMLButtonElement>) => void;
-	handleCreateNewFile: (e: React.MouseEvent<HTMLButtonElement>) => void;
+	handleRenameClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
-export default function Nav({
-	handleCreateNewFolder,
-	handleCreateNewFile,
-}: Props) {
+export default function NavEdit({ handleRenameClick }: Props) {
 	return (
 		<div className="w-100">
 			<nav className="navbar navbar-dark bg-dark ">
 				<h3 className=" nav-item navbar-brand">NellNav</h3>
 				<button
 					onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-						return handleCreateNewFolder(e);
+						handleRenameClick(e);
 					}}
 					className=" nav-item  btn btn-secondary">
-					New Folder
+					Rename
 				</button>
 				<button
 					onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-						return handleCreateNewFile(e);
+						return e;
 					}}
 					className=" nav-item  btn btn-secondary">
-					New File
+					Go-To
 				</button>
-				<button className=" nav-item btn btn-secondary">Upload</button>
+				<button className=" nav-item btn btn-danger">Delete</button>
 				<form className=" mr-2 d-flex justify-content-end nav-item form-inline">
 					<input
 						className=" form-control mr-sm-2"
