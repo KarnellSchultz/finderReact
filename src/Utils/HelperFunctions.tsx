@@ -2,14 +2,14 @@ const createNewFolder = (
 	name: string = 'untitled',
 	type: string = 'folder',
 	parent: string = 'root',
-	child: string = '',
+	child: any = [],
 	isEditing: boolean = false,
 	isHighlighted: boolean = false,
 ): {
 	type: string;
 	name: string;
 	parent: string;
-	child: string;
+	child: any;
 	isEditing: boolean;
 	isHighlighted: boolean;
 } => {

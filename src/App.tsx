@@ -11,7 +11,7 @@ const App: React.FC = () => {
 			type: 'folder',
 			name: 'Untitled Folder',
 			parent: 'root',
-			child: '',
+			child: [],
 			isEditing: false,
 			isHighlighted: false,
 		},
@@ -19,11 +19,14 @@ const App: React.FC = () => {
 
 	const [files, setFiles] = useState(initialState);
 	const [isHighlighted, setIsHighlighted] = useState(false);
+	const [isEditing, setIsEditing] = useState(false);
+	const [editingIndex, setEditingIndex] = useState(0);
 
 	const handleCreateNewFolder = (
 		e: React.MouseEvent<HTMLButtonElement>,
 	): void => {
 		const newFile = createNewFolder();
+		newFile.child = [createNewFolder()];
 		e.preventDefault();
 		console.log(files);
 		setFiles([...files, newFile]);
@@ -35,7 +38,7 @@ const App: React.FC = () => {
 			type: 'folder',
 			name: 'firstFolder',
 			parent: 'root',
-			child: '',
+			child: [],
 			isEditing: false,
 			isHighlighted: false,
 		};
@@ -46,8 +49,7 @@ const App: React.FC = () => {
 
 	const handleFolderClick = (e: React.MouseEvent, index: number) => {
 		e.preventDefault();
-		console.log(index, 'this is index');
-
+		setEditingIndex(index);
 		const tempFiles = [...files];
 		tempFiles.map(el => (el.isHighlighted = false));
 		tempFiles[index].isHighlighted = !tempFiles[index].isHighlighted;
@@ -55,33 +57,40 @@ const App: React.FC = () => {
 		setFiles([...tempFiles]);
 	};
 
+	const handleFolderNameEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
+		e.preventDefault();
+		const tempFiles = [...files];
+		tempFiles[editingIndex].name += e.currentTarget.name;
+		setFiles([...tempFiles]);
+	};
+
+	const handleRenameSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		setIsEditing(!isEditing);
+	};
+	const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		const tempFiles = [...files];
+		tempFiles.splice(editingIndex, 1);
+		setEditingIndex(0);
+		setIsHighlighted(false);
+		setFiles(tempFiles);
+	};
+
 	const handleRenameClick = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
-		console.log('clicked rename');
+		setIsEditing(!isEditing);
 		const tempFiles = [...files];
+		console.log('clicked rename');
 
-		// const result = tempFiles.filter((el, index) => {
-		// 	console.log(index);
-		// 	return el.isHighlighted === true;
-		// });
-
-		// const results = tempFiles.map(el => {
-		// 	if (el.isHighlighted) {
-		// 		el.isEditing = true;
-		// 	}
-		// });
-
+		let tempElement: {} | undefined;
 		tempFiles.forEach(el => {
 			if (el.isHighlighted) {
 				el.isEditing = true;
-				console.log('GOT EMMM, ', el);
+				tempElement = el;
 			}
 		});
 
-		// // tempFiles.splice([index], 1, result);
-		// const tempRestult = [...tempFiles, result[0]];
-		// // result[0].isEditing = !result[0].isEditing;
-		// // setFiles([...finalResult])
 		console.log(tempFiles);
 	};
 
@@ -90,10 +99,13 @@ const App: React.FC = () => {
 			<div className="jumbotron bg-secondary border border-white ">
 				<div className="row bg-dark">
 					<NavContainer
+						handleRenameSaveClick={handleRenameSaveClick}
 						handleCreateNewFile={handleCreateNewFile}
 						handleCreateNewFolder={handleCreateNewFolder}
 						isHighlighted={isHighlighted}
+						isEditing={isEditing}
 						handleRenameClick={handleRenameClick}
+						handleDeleteClick={handleDeleteClick}
 					/>
 				</div>
 				<div className="row bg-white">
@@ -101,7 +113,11 @@ const App: React.FC = () => {
 				</div>
 				<div className="row bg-light">
 					<TreeNav />
-					<MainContainer handleFolderClick={handleFolderClick} files={files} />
+					<MainContainer
+						handleFolderClick={handleFolderClick}
+						handleFolderNameEdit={handleFolderNameEdit}
+						files={files}
+					/>
 				</div>
 			</div>
 		</div>

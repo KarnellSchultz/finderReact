@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Emoji from './Utils/Emoji';
 import Toggle from './Utils/Toggle';
 import Main from './Main';
@@ -6,11 +6,13 @@ import Main from './Main';
 type Props = {
 	files: any;
 	handleFolderClick: (e: React.MouseEvent, index: number) => void;
+	handleFolderNameEdit: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export default function MainContainer({
 	files = [],
 	handleFolderClick,
+	handleFolderNameEdit,
 }: Props) {
 	function folderRow(files: any) {
 		const rows = files.map(
@@ -28,34 +30,22 @@ export default function MainContainer({
 				const { name, isEditing } = el;
 				return (
 					<>
-						<Toggle>
-							{({ on, toggle }) => {
-								return (
-									<div
-										onClick={e => handleFolderClick(e, index)}
-										key={index}
-										className="col">
-										<Emoji symbol="📁" label={name} />
-										{isEditing && <input type="text" />}
-										{on ? (
-											<input
-												onClick={toggle}
-												className="form-control-sm"
-												type="text"
-												size={7}></input>
-										) : (
-											<span
-												onClick={e => {
-													handleFolderClick(e, index);
-												}} //pass in index
-												className="badge badge-danger">
-												{name}
-											</span>
-										)}
-									</div>
-								);
-							}}
-						</Toggle>
+						<div
+							onClick={e => handleFolderClick(e, index)}
+							key={index}
+							className="col">
+							<Emoji symbol="📁" label={name} />
+
+							<input
+								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+									handleFolderNameEdit
+								}
+								className="form-control-sm"
+								type="text"
+								value={name}
+								name={name}
+								size={7}></input>
+						</div>
 					</>
 				);
 			},
