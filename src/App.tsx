@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Breadcrumb from './Breadcrumb';
 import TreeNav from './TreeNav';
 import MainContainer from './MainContainer';
@@ -18,9 +18,17 @@ const App: React.FC = () => {
 	];
 
 	const [files, setFiles] = useState(initialState);
+	const [view, setView] = useState(files);
 	const [isHighlighted, setIsHighlighted] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
 	const [editingIndex, setEditingIndex] = useState(0);
+
+	useEffect(() => {
+		setView(files);
+
+		console.table(files);
+		console.table(view);
+	}, [files]);
 
 	const handleCreateNewFolder = (
 		e: React.MouseEvent<HTMLButtonElement>,
@@ -57,17 +65,14 @@ const App: React.FC = () => {
 		setFiles([...tempFiles]);
 	};
 
-	const handleFolderNameEdit = (e: React.ChangeEvent<HTMLInputElement>) => {
-		e.preventDefault();
+	const handleFolderNameEdit = (tempName: string, tempSetValue: string) => {
 		const tempFiles = [...files];
-		tempFiles[editingIndex].name += e.currentTarget.name;
-		setFiles([...tempFiles]);
+		tempFiles[editingIndex].name = tempSetValue;
+		setFiles(tempFiles);
+
+		console.log(files[editingIndex], editingIndex);
 	};
 
-	const handleRenameSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		setIsEditing(!isEditing);
-	};
 	const handleDeleteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		const tempFiles = [...files];
@@ -75,6 +80,17 @@ const App: React.FC = () => {
 		setEditingIndex(0);
 		setIsHighlighted(false);
 		setFiles(tempFiles);
+	};
+
+	const handleRenameSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		const tempFiles = [...files];
+		tempFiles.forEach(el => {
+			if (el.isEditing) {
+				el.isEditing = false;
+			}
+		});
+		setIsEditing(!isEditing);
 	};
 
 	const handleRenameClick = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -94,6 +110,12 @@ const App: React.FC = () => {
 		console.log(tempFiles);
 	};
 
+	const handleGotoClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+		e.preventDefault();
+		const tempFiles = [...files];
+		setView(tempFiles[editingIndex].child);
+	};
+
 	return (
 		<div className="App container bg-light shadow p-3 mb-5 bg-white rounded">
 			<div className="jumbotron bg-secondary border border-white ">
@@ -106,6 +128,7 @@ const App: React.FC = () => {
 						isEditing={isEditing}
 						handleRenameClick={handleRenameClick}
 						handleDeleteClick={handleDeleteClick}
+						handleGotoClick={handleGotoClick}
 					/>
 				</div>
 				<div className="row bg-white">
@@ -116,7 +139,7 @@ const App: React.FC = () => {
 					<MainContainer
 						handleFolderClick={handleFolderClick}
 						handleFolderNameEdit={handleFolderNameEdit}
-						files={files}
+						view={view}
 					/>
 				</div>
 			</div>

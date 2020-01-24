@@ -4,6 +4,7 @@ type Props = {
 	handleRenameClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleRenameSaveClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleDeleteClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+	handleGotoClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	isEditing: boolean;
 };
 
@@ -11,6 +12,7 @@ export default function NavEdit({
 	handleRenameClick,
 	handleRenameSaveClick,
 	handleDeleteClick,
+	handleGotoClick,
 	isEditing,
 }: Props) {
 	return (
@@ -37,7 +39,7 @@ export default function NavEdit({
 				)}
 				<button
 					onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-						return e;
+						return handleGotoClick(e);
 					}}
 					className=" nav-item  btn btn-secondary">
 					Go-To

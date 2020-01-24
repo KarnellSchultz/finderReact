@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
 import Emoji from './Utils/Emoji';
-import Toggle from './Utils/Toggle';
 import Main from './Main';
 
 type Props = {
-	files: any;
+	view: any;
 	handleFolderClick: (e: React.MouseEvent, index: number) => void;
-	handleFolderNameEdit: (e: React.ChangeEvent<HTMLInputElement>) => void;
+	handleFolderNameEdit: (tempName: string, tempSetValue: string) => void;
 };
 
 export default function MainContainer({
-	files = [],
+	view = [],
 	handleFolderClick,
 	handleFolderNameEdit,
 }: Props) {
-	function folderRow(files: any) {
-		const rows = files.map(
+	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+		event.preventDefault();
+		return handleFolderNameEdit(
+			event.currentTarget.name,
+			event.currentTarget.value,
+		);
+	};
+
+	function folderRow(view: any): React.ReactNode {
+		const rows: React.ReactChild = view.map(
 			(
 				el: {
 					type: 'folder';
@@ -30,22 +37,31 @@ export default function MainContainer({
 				const { name, isEditing } = el;
 				return (
 					<>
-						<div
-							onClick={e => handleFolderClick(e, index)}
-							key={index}
-							className="col">
-							<Emoji symbol="📁" label={name} />
+						{isEditing ? (
+							<div
+								// onClick={e => handleFolderClick(e, index)}
+								key={index}
+								className="col">
+								<Emoji symbol="📁" />
 
-							<input
-								onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-									handleFolderNameEdit
-								}
-								className="form-control-sm"
-								type="text"
-								value={name}
-								name={name}
-								size={7}></input>
-						</div>
+								<input
+									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+										handleChange(e)
+									}
+									value={name}
+									className="form-control-sm"
+									type="text"
+									name="name"
+									size={7}></input>
+							</div>
+						) : (
+							<div
+								onClick={e => handleFolderClick(e, index)}
+								key={index}
+								className="col">
+								<Emoji symbol="📁" label={name} />
+							</div>
+						)}
 					</>
 				);
 			},
@@ -53,7 +69,7 @@ export default function MainContainer({
 		return rows;
 	}
 
-	const folderRows = folderRow(files);
+	const folderRows = folderRow(view);
 
 	return (
 		<>

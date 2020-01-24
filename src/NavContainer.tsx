@@ -10,6 +10,7 @@ type Props = {
 	handleRenameClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleRenameSaveClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleDeleteClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+	handleGotoClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 export default function NavContainer({
@@ -20,6 +21,7 @@ export default function NavContainer({
 	handleRenameSaveClick,
 	handleDeleteClick,
 	isEditing,
+	handleGotoClick,
 }: Props) {
 	return (
 		<>
@@ -29,6 +31,7 @@ export default function NavContainer({
 					handleRenameClick={handleRenameClick}
 					isEditing={isEditing}
 					handleDeleteClick={handleDeleteClick}
+					handleGotoClick={handleGotoClick}
 				/>
 			) : (
 				<Nav
