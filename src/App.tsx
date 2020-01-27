@@ -23,6 +23,7 @@ const App: React.FC = () => {
 			isHighlighted: false,
 			parent: 'root',
 			child: [childObject],
+			uid: Math.random(),
 		},
 	];
 
