@@ -1,23 +1,32 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, createContext } from 'react';
 import Breadcrumb from './Breadcrumb';
 import TreeNav from './TreeNav';
 import MainContainer from './MainContainer';
-import createNewFolder from './Utils/HelperFunctions';
+import {
+	createNewFolder,
+	removeIsEditing,
+	removeIsHighlighting,
+} from './Utils/HelperFunctions';
 import NavContainer from './NavContainer';
 
+import { FolderFiles } from './Utils/Interfaces';
+
+export const FilesContext = createContext({});
+
 const App: React.FC = () => {
-	const initialState = [
+	const childObject = createNewFolder();
+	const initFileState: FolderFiles[] = [
 		{
 			type: 'folder',
-			name: 'Untitled Folder',
-			parent: 'root',
-			child: [],
+			name: 'Document',
 			isEditing: false,
 			isHighlighted: false,
+			parent: 'root',
+			child: [childObject],
 		},
 	];
 
-	const [files, setFiles] = useState(initialState);
+	const [files, setFiles] = useState(initFileState);
 	const [view, setView] = useState(files);
 	const [isHighlighted, setIsHighlighted] = useState(false);
 	const [isEditing, setIsEditing] = useState(false);
@@ -27,8 +36,10 @@ const App: React.FC = () => {
 		setView(files);
 
 		console.table(files);
-		console.table(view);
-	}, [files]);
+		console.table('VIEW:', view);
+		console.log(editingIndex);
+		console.log(isEditing, 'editing');
+	}, [files, view, isEditing, isHighlighted, editingIndex]);
 
 	const handleCreateNewFolder = (
 		e: React.MouseEvent<HTMLButtonElement>,
@@ -42,30 +53,33 @@ const App: React.FC = () => {
 	const handleCreateNewFile = (
 		e: React.MouseEvent<HTMLButtonElement>,
 	): void => {
-		const newFile = {
-			type: 'folder',
-			name: 'firstFolder',
-			parent: 'root',
-			child: [],
-			isEditing: false,
-			isHighlighted: false,
-		};
 		e.preventDefault();
+		const newFile = createNewFolder();
 		console.log(files);
 		setFiles([...files, newFile]);
 	};
 
 	const handleFolderClick = (e: React.MouseEvent, index: number) => {
 		e.preventDefault();
-		setEditingIndex(index);
+
 		const tempFiles = [...files];
-		tempFiles.map(el => (el.isHighlighted = false));
-		tempFiles[index].isHighlighted = !tempFiles[index].isHighlighted;
-		setIsHighlighted(!isHighlighted);
+		setEditingIndex(index);
+		removeIsEditing(tempFiles);
+		removeIsHighlighting(tempFiles);
+
+		setIsHighlighted(true);
+		setIsEditing(false);
+
+		if (tempFiles[index].isHighlighted) {
+			tempFiles[index].isHighlighted = false;
+		} else {
+			tempFiles[index].isHighlighted = true;
+		}
+		// tempFiles[index].isHighlighted = true;
 		setFiles([...tempFiles]);
 	};
 
-	const handleFolderNameEdit = (tempName: string, tempSetValue: string) => {
+	const handleFolderNameEdit = (tempSetValue: string) => {
 		const tempFiles = [...files];
 		tempFiles[editingIndex].name = tempSetValue;
 		setFiles(tempFiles);
@@ -78,72 +92,84 @@ const App: React.FC = () => {
 		const tempFiles = [...files];
 		tempFiles.splice(editingIndex, 1);
 		setEditingIndex(0);
-		setIsHighlighted(false);
+		removeIsEditing(tempFiles);
 		setFiles(tempFiles);
 	};
 
 	const handleRenameSaveClick = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		const tempFiles = [...files];
-		tempFiles.forEach(el => {
-			if (el.isEditing) {
-				el.isEditing = false;
-			}
-		});
-		setIsEditing(!isEditing);
+		removeIsEditing(tempFiles);
+		removeIsHighlighting(tempFiles);
+		setIsEditing(false);
+		setIsHighlighted(false);
 	};
 
 	const handleRenameClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-		e.preventDefault();
-		setIsEditing(!isEditing);
-		const tempFiles = [...files];
 		console.log('clicked rename');
+		e.preventDefault();
 
-		let tempElement: {} | undefined;
-		tempFiles.forEach(el => {
+		setIsEditing(true);
+		const tempFiles = [...files];
+
+		tempFiles.map((el): FolderFiles | null => {
 			if (el.isHighlighted) {
 				el.isEditing = true;
-				tempElement = el;
+			} else {
+				return null;
 			}
+			return el;
 		});
-
-		console.log(tempFiles);
+		setFiles(tempFiles);
 	};
 
 	const handleGotoClick = (e: React.MouseEvent<HTMLButtonElement>) => {
 		e.preventDefault();
 		const tempFiles = [...files];
-		setView(tempFiles[editingIndex].child);
+		console.log(tempFiles);
+		console.log(tempFiles[editingIndex].child);
+		console.log(editingIndex);
+
+		tempFiles.map(
+			(el): FolderFiles => {
+				if (el.isHighlighted) {
+					setView([el]);
+				}
+				return el;
+			},
+		);
 	};
 
 	return (
-		<div className="App container bg-light shadow p-3 mb-5 bg-white rounded">
-			<div className="jumbotron bg-secondary border border-white ">
-				<div className="row bg-dark">
-					<NavContainer
-						handleRenameSaveClick={handleRenameSaveClick}
-						handleCreateNewFile={handleCreateNewFile}
-						handleCreateNewFolder={handleCreateNewFolder}
-						isHighlighted={isHighlighted}
-						isEditing={isEditing}
-						handleRenameClick={handleRenameClick}
-						handleDeleteClick={handleDeleteClick}
-						handleGotoClick={handleGotoClick}
-					/>
-				</div>
-				<div className="row bg-white">
-					<Breadcrumb />
-				</div>
-				<div className="row bg-light">
-					<TreeNav />
-					<MainContainer
-						handleFolderClick={handleFolderClick}
-						handleFolderNameEdit={handleFolderNameEdit}
-						view={view}
-					/>
+		<FilesContext.Provider value={files}>
+			<div className="App container bg-light shadow p-3 mb-5 bg-white rounded">
+				<div className="jumbotron bg-secondary border border-white ">
+					<div className="row bg-dark">
+						<NavContainer
+							handleRenameSaveClick={handleRenameSaveClick}
+							handleCreateNewFile={handleCreateNewFile}
+							handleCreateNewFolder={handleCreateNewFolder}
+							isHighlighted={isHighlighted}
+							handleRenameClick={handleRenameClick}
+							handleDeleteClick={handleDeleteClick}
+							handleGotoClick={handleGotoClick}
+							isEditing={isEditing}
+						/>
+					</div>
+					<div className="row bg-white">
+						<Breadcrumb files={files} />
+					</div>
+					<div className="row bg-light">
+						<TreeNav />
+						<MainContainer
+							handleFolderClick={handleFolderClick}
+							handleFolderNameEdit={handleFolderNameEdit}
+							view={view}
+						/>
+					</div>
 				</div>
 			</div>
-		</div>
+		</FilesContext.Provider>
 	);
 };
 

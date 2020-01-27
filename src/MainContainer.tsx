@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Emoji from './Utils/Emoji';
 import Main from './Main';
+
+import { FolderFiles } from './Utils/Interfaces';
 
 type Props = {
 	view: any;
 	handleFolderClick: (e: React.MouseEvent, index: number) => void;
-	handleFolderNameEdit: (tempName: string, tempSetValue: string) => void;
+	handleFolderNameEdit: (tempSetValue: string) => void;
 };
 
 export default function MainContainer({
@@ -15,35 +17,18 @@ export default function MainContainer({
 }: Props) {
 	const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
 		event.preventDefault();
-		return handleFolderNameEdit(
-			event.currentTarget.name,
-			event.currentTarget.value,
-		);
+		return handleFolderNameEdit(event.currentTarget.value);
 	};
 
 	function folderRow(view: any): React.ReactNode {
 		const rows: React.ReactChild = view.map(
-			(
-				el: {
-					type: 'folder';
-					name: 'firstFolder';
-					parent: 'root';
-					child: '';
-					isEditing: boolean;
-					isHighlighted: boolean;
-				},
-				index: number,
-			) => {
-				const { name, isEditing } = el;
+			(el: FolderFiles, index: number) => {
+				const { name, isEditing, isHighlighted } = el;
 				return (
 					<>
 						{isEditing ? (
-							<div
-								// onClick={e => handleFolderClick(e, index)}
-								key={index}
-								className="col">
-								<Emoji symbol="📁" />
-
+							<div key={index} className="col">
+								<Emoji symbol="📂" />
 								<input
 									onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
 										handleChange(e)
@@ -59,7 +44,11 @@ export default function MainContainer({
 								onClick={e => handleFolderClick(e, index)}
 								key={index}
 								className="col">
-								<Emoji symbol="📁" label={name} />
+								{isHighlighted ? (
+									<Emoji symbol="📂" label={name} />
+								) : (
+									<Emoji symbol="📁" label={name} />
+								)}
 							</div>
 						)}
 					</>

@@ -19,7 +19,6 @@ export default function NavEdit({
 		<div className="w-100">
 			<nav className="navbar navbar-dark bg-dark ">
 				<h3 className=" nav-item navbar-brand">NellNav</h3>
-
 				{!isEditing ? (
 					<button
 						onClick={(e: React.MouseEvent<HTMLButtonElement>) => {

@@ -2,7 +2,7 @@ import React from 'react';
 import Emoji from './Utils/Emoji';
 
 type Props = {
-	folderRows: any;
+	folderRows: React.ReactNode;
 };
 
 export default function Main({ folderRows }: Props) {

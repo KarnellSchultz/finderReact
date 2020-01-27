@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { FilesContext } from './App';
 
 export default function TreeNav() {
+	const hello = useContext(FilesContext);
+	console.log(hello);
+
 	return (
 		<div className="col-2 mb-2">
 			<nav className="navbar navbar-light bg-light">

@@ -5,12 +5,12 @@ import NavEdit from './NavEdit';
 type Props = {
 	handleCreateNewFolder: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleCreateNewFile: (e: React.MouseEvent<HTMLButtonElement>) => void;
-	isHighlighted: boolean;
-	isEditing: boolean;
 	handleRenameClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleRenameSaveClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleDeleteClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	handleGotoClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
+	isHighlighted: boolean;
+	isEditing: boolean;
 };
 
 export default function NavContainer({
@@ -20,8 +20,8 @@ export default function NavContainer({
 	handleRenameClick,
 	handleRenameSaveClick,
 	handleDeleteClick,
-	isEditing,
 	handleGotoClick,
+	isEditing,
 }: Props) {
 	return (
 		<>
@@ -29,9 +29,9 @@ export default function NavContainer({
 				<NavEdit
 					handleRenameSaveClick={handleRenameSaveClick}
 					handleRenameClick={handleRenameClick}
-					isEditing={isEditing}
 					handleDeleteClick={handleDeleteClick}
 					handleGotoClick={handleGotoClick}
+					isEditing={isEditing}
 				/>
 			) : (
 				<Nav
