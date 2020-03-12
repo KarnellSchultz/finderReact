@@ -1,25 +1,26 @@
-import { FolderFiles } from './Interfaces';
+import { FolderFiles } from "./Interfaces";
 
 export const createNewFolder = (): FolderFiles => {
-	return {
-		name: 'New Folder',
-		type: 'folder',
-		isEditing: false,
-		isHighlighted: false,
-		parent: 'root',
-		child: [],
-	};
+  return {
+    name: "New Folder",
+    type: "folder",
+    isEditing: false,
+    isHighlighted: false,
+    parent: "root",
+    child: [],
+    uid: Math.random()
+  };
 };
 
 export const removeIsEditing = (tempFiles: FolderFiles[]): FolderFiles[] => {
-	tempFiles.map(el => (el.isEditing = false));
+  tempFiles.map(el => (el.isEditing = false));
 
-	return tempFiles;
+  return tempFiles;
 };
 export const removeIsHighlighting = (
-	tempFiles: FolderFiles[],
+  tempFiles: FolderFiles[]
 ): FolderFiles[] => {
-	tempFiles.map(el => (el.isHighlighted = false));
+  tempFiles.map(el => (el.isHighlighted = false));
 
-	return tempFiles;
+  return tempFiles;
 };
